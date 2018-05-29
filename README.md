@@ -9,7 +9,7 @@ I've included my Circos configuration files which use fonts that are not include
 
 `arial_bold = fonts/modern/Arial Bold.ttf`  
 
-ToDo:
+**ToDo:**
 - Add example data
 - Create py_circos module of functions
 - Lock package dependencies
