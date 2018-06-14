@@ -12,14 +12,20 @@
 
 '''
 TODO:
+dump all images into generated project folder
+better names for files
+handle .csv and .xls file input
+easily replicate environment (Docker?)
 import csv to generate dictionaries
-
+print message functions
+function to make file paths
+option for all images or specific color layer
+specify full path to project folder if saving somewhere else
 '''
 
-
-
+# imports may not be necessary with the circos module imported
 import argparse
-import circos
+from circos import *
 import datetime
 import glob
 import numpy as np
@@ -36,14 +42,15 @@ parser.add_argument('-o', '--output_dir', default=f'{datetime.datetime.now():cir
 args = parser.parse_args()
 
 # setup sample dictionaries
+
 all_spec_dict = {'output_file_name':'h7-stem',
                  'circos_conf_file':'circos.conf'}
 h7_spec_dict = {'output_file_name':'h7',
-                'spec_list':['H7 sp', 'sp'],
+                'spec_list':['H7 sp', 'spec_2'],
                 'color':'red_orange',
                 'circos_conf_file':'circos_h7.conf'}
 stem_spec_dict = {'output_file_name':'stem',
-                  'spec_list':['H7 dp', 'dp'],
+                  'spec_list':['H7 dp', 'spec_1'],
                   'color':'blue',
                   'circos_conf_file':'circos_stem.conf'}
 dict_list = [all_spec_dict, h7_spec_dict, stem_spec_dict]
@@ -53,62 +60,64 @@ dict_list = [all_spec_dict, h7_spec_dict, stem_spec_dict]
 input_file = args.input_excel
 project_folder = args.output_dir
 
-
-# make files
+# make paths
 home_dir = os.getcwd()
-input_files_folder = home_dir + '/input_files'
-os.makedirs(input_files_folder, exist_ok=True)
-participants_dir = home_dir + '/participants'
-os.makedirs(participants_dir, exist_ok=True)
+project_dir = home_dir + '/' + project_folder
+input_files_folder = project_dir + '/input_files'
+samples_dir = project_dir + '/samples'
+circos_conf_dir = home_dir + '/circos_conf'
 
-# make .csv input files
+# make directories
+os.makedirs(project_dir, exist_ok=True)
+os.makedirs(input_files_folder, exist_ok=True)
+os.makedirs(samples_dir, exist_ok=True)
+
+# identify all sheets in Excel input file
 x1 = pd.ExcelFile(input_file)
 sheets = x1.sheet_names
 
+# work through each sheet in the Excel input file
 for i in sheets:
-    os.chdir(home_dir)
-    participant_id = i
-    participant_input_file = participant_id + '_input.csv'
+    os.chdir(project_dir)
+    sample_id = i
+    sample_input_file = sample_id + '_input.csv'
     start_df = x1.parse(i)
-    start_df.to_csv(input_files_folder + '/' + participant_input_file, index=False)
+    start_df.to_csv(input_files_folder + '/' + sample_input_file, index=False)
 
     print()
     print('---')
-    print(f'Participant ID: {participant_id}')
-    print(f'Input File: {participant_input_file}')
+    print(f'Sample ID: {sample_id}')
+    print(f'Input File: {sample_input_file}')
     print('---')
-    print()
 
     # file paths
-    home_dir = os.getcwd()
-    indiv_participant_dir = participants_dir + '/' + participant_id
-    images_dir = home_dir + '/images'
-    participant_image_dir = images_dir + '/' + participant_id
-    circos_conf_dir = home_dir + '/circos_conf'
+    current_dir = os.getcwd()
+    sample_dir = samples_dir + '/' + sample_id
+    images_dir = current_dir + '/all_images'
+    sample_image_dir = images_dir + '/' + sample_id
 
     print()
     print('---')
     print('Generate Directory Tree')
-    print(f'Current Working Directory: {home_dir}')
+    print(f'Current Working Directory: {current_dir}')
     print('---')
-    print()
-    folders_list = [indiv_participant_dir, images_dir, participant_image_dir]
+    folders_list = [sample_dir, images_dir, sample_image_dir]
     for i in folders_list:
         os.makedirs(i, exist_ok=True)
 
     # this is the biggie
     for i in dict_list:
-        # navigate to participant directory
-        os.chdir(indiv_participant_dir)
+        # navigate to sample directory
+        os.chdir(sample_dir)
         # make directories
-        img_fld = participant_image_dir + '/' + i['output_file_name']
+        img_fld = sample_image_dir + '/' + i['output_file_name']
         current_folder_name = i['output_file_name']
         os.makedirs(current_folder_name, exist_ok=True)
         os.makedirs(img_fld, exist_ok=True)
         # go to directory
         os.chdir(current_folder_name)
         # make circos files
-        #df = circos_input_file(participant_input_file, i) # spits out sorted file
+        #df = circos_input_file(sample_input_file, i) # spits out sorted file
         df = format_dataframe(start_df, i)
         make_top_karyotype(df, i)
         make_bands_karyotype(df, i)
@@ -118,22 +127,20 @@ for i in sheets:
     # run circos
         for i in dict_list:
             circos_conf = circos_conf_dir + '/' + i['circos_conf_file']
-            circos_plot_name = participant_id + '_' + i['output_file_name']
+            circos_plot_name = sample_id + '_' + i['output_file_name']
             print()
             print('---')
             print('Running Circos')
             print(f'Circos configuration file path: {circos_conf}')
             print(f'Output plot name: {circos_plot_name}')
             print('---')
-            print()
             subprocess.run('circos -conf {0} -outputfile {1}'.format(circos_conf, circos_plot_name), shell=True)
 
         # copy images to main image folder
         print()
         print('---')
-        print('Copying Circos Plots')
+        print('Copying {sample_id} Circos Plots to "images" Directory')
         print('---')
-        print()
         for file in glob.glob('*.png'):
             shutil.copy(file, img_fld)
         for file in glob.glob('*.svg'):
