@@ -12,7 +12,49 @@ cd ~/circos-py
 python make_circos_plots.py example_input_data.csv
 ```
 
-## Install Circos-Py
+## Install
+### Quick-Guide
+Just a quick gerneral guide for Mac users: if you do not actively use Python, Perl, or Circos already I would recommend installing [Anaconda3](https://www.anaconda.com/download/), then installing Perl via conda:
+
+```
+conda install -c anaconda perl
+```
+
+Then install [Circos](http://circos.ca/software/download/), unzip, and symlink to usr/local/bin:
+
+```
+cd ~/Desktop
+wget http://circos.ca/distribution/circos-0.69-6.tgz
+tar xvfz circos-0.69-6.tgz
+ln -s ~/Desktop/circos-0.69-6/bin/circos /usr/local/bin/circos
+```
+
+You should now be able to run circos from the command line.  Check this by running the following from the terminal:
+
+`$ circos -v`
+
+And you should see something similar to:
+
+`circos | v 0.69-6 | 31 July 2017 | Perl 5.022000`
+
+Now it's time to check what Perl modules are needed to run Circos: `circos -module`
+
+A list of modules should sputter forth.  Use the below snippet to install all Circos Perl modules with CPAN:
+
+```
+cpan Carp Clone Config::General Cwd Data::Dumper Digest::MD5 File::Basename File::Spec::Functions File::Temp FindBin Font::TTF::Font GD GF::Polyline Getopt::Long IO::File List::MoreUtils List::Util Math::Bezier Math::BigFloat Math::Round Math::VecStat Memoize POSIX Params::Validate Pod::Usage Readonly Regexp::Common SVG Set::IntSpan Statistics::Basic Storable Sys::Hostname Text::Balanced Text::Format Time::HiRes
+```
+
+Last thing is to clone this repository:
+
+```
+git clone git@github.com:greenkidneybean/circos-py.git
+```
+
+### Circos
+Unfortunately Circos takes a bit of effort to get up and running.  If you're on a Mac I'd recommend [installing via Homebrew](http://circos.ca/tutorials/lessons/configuration/distribution_and_installation/).  
+### Circos-Py
+
 
 ## Setup
 ### Add Circos Binary to Your Shell Path

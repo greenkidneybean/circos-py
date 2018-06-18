@@ -200,13 +200,14 @@ def generate_circos_links(input_dataframe, spec_dict):
     final_links=final_links.rename(columns={'circos_time':'#ciros_time'})
 
     # write link files
+    # this can be changed
     final_links.to_csv(f'links_{output_file_name}.txt', sep='\t', index=False, header=True)
 
     # this is dangerous because it will layer the links.txt with each iteration
-    if os.path.isfile('links.txt') is False:
-        final_links.to_csv('links.txt', sep='\t', index=False, header=True)
+    if os.path.isfile('links_all-data.txt') is False:
+        final_links.to_csv('links_all-data.txt', sep='\t', index=False, header=True)
     else:
-        with open('links.txt', 'a') as f:
+        with open('links_all-data.txt', 'a') as f:
             final_links.to_csv(f, sep='\t', index=False)
 
     return final_links
