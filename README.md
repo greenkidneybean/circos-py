@@ -52,7 +52,8 @@ git clone git@github.com:greenkidneybean/circos-py.git
 ```
 
 ### Circos
-Unfortunately Circos takes a bit of effort to get up and running.  If you're on a Mac I'd recommend [installing via Homebrew](http://circos.ca/tutorials/lessons/configuration/distribution_and_installation/).  
+Unfortunately Circos takes a bit of effort to get up and running.  I swear at one point I was albe to [install via Homebrew](http://circos.ca/tutorials/lessons/configuration/distribution_and_installation/), but if that's kaput then head straight to the source: [Circos](http://circos.ca/software/download/)
+
 ### Circos-Py
 
 
@@ -82,6 +83,7 @@ I'm also delimiting all my data files (karyotype and links) with tabs instead of
 
 **ToDo:**
 - Add two more sample to example data
+- requirements?
 - create circos module with all functions
 - Lock package dependencies
 - Web GUI
